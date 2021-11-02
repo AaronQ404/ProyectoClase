@@ -1,6 +1,7 @@
 package com.aqa.proyectoclase.vista.fragments
 
 import android.content.ContentValues.TAG
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -8,7 +9,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.aqa.proyectoclase.controlador.CardContactosAdapter
+import com.aqa.proyectoclase.controlador.InterfazContactos
 import com.aqa.proyectoclase.databinding.FragmentContactBinding
+import com.aqa.proyectoclase.modelo.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
@@ -18,18 +23,24 @@ import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
 
 
-class ContactFragment : Fragment() {
+class ContactFragment : Fragment(), InterfazContactos {
     private lateinit var auth:FirebaseAuth
     private lateinit var myRef:DatabaseReference
-    private val contexto = context
+    private lateinit var contexto:Context
     lateinit var  userId : String
     private lateinit var user :FirebaseUser
+    private lateinit var users : ArrayList<User>
+    private lateinit var contactosAdapter: CardContactosAdapter
+//    private lateinit var interfazContactos: InterfazContactos
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         auth = Firebase.auth
+        contexto = this.context!!
+        users  = ArrayList<User>()
         val database = Firebase.database
-        val myRef = database.getReference("Contactos").child(auth.currentUser?.uid.toString()).child("User1")
+        val myRef = database.getReference("Contactos").child(auth.currentUser?.uid.toString())
+                .child("friends").orderByChild("username")
         user = auth.currentUser!!
         val provId = user.providerData.toString()
         // Inflate the layout for this fragment
@@ -42,8 +53,21 @@ class ContactFragment : Fragment() {
             override fun onDataChange(snapshot: DataSnapshot) {
                 // This method is called once with the initial value and again
                 // whenever data at this location is updated.
-                val value = snapshot.getValue<String>()
-                binding.txtTest.text = value.toString()
+                if(snapshot!=null){
+                    for(u in snapshot.children){
+                        val contacto = u.getValue<User>()
+                        if (contacto != null) {
+                            users.add(contacto)
+                        }
+                    }
+                }else{
+                    userId="No tienes amigos"
+                }
+
+                contactosAdapter = CardContactosAdapter(users,contexto)
+                binding.rclContacts.adapter = contactosAdapter
+                binding.rclContacts.layoutManager = LinearLayoutManager(contexto, LinearLayoutManager.VERTICAL ,false)
+
             }
 
             override fun onCancelled(error: DatabaseError) {
@@ -92,6 +116,10 @@ class ContactFragment : Fragment() {
         }
 
 
+    }
+
+    override fun onClickContacto(u: User) {
+        Toast.makeText(context,u.username.toString(),Toast.LENGTH_SHORT).show()
     }
 
 }

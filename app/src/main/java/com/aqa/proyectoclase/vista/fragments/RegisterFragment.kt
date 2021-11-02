@@ -8,9 +8,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import com.aqa.proyectoclase.databinding.FragmentRegisterBinding
+import com.aqa.proyectoclase.modelo.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.auth.ktx.userProfileChangeRequest
+import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 
 import java.util.regex.Pattern
@@ -48,7 +50,10 @@ class RegisterFragment : Fragment() {
                     val profileCreateUp = userProfileChangeRequest {
                         displayName = userName
                     }
+                    //TODO al crear usuario guardarlo en realtime database
                     user!!.updateProfile(profileCreateUp).addOnCompleteListener {
+                        val userLocal: User = User(user.uid.toString(),user.displayName.toString(),user.email.toString()," ")
+                        Firebase.database.getReference("Users").child(auth.currentUser?.uid.toString()).setValue(userLocal)
                         Toast.makeText(this.context,"Usuario creado con exito",Toast.LENGTH_SHORT).show()
                     }
                 }
