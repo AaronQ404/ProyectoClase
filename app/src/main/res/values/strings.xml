@@ -3,4 +3,6 @@
     <string name="usuario">Usuario</string>
     <string name="contrasenna">Contraseña</string>
     <string name="login">Login</string>
+    <string name="correo">Email</string>
+    <string name="rep_contrasenna">Repetir Contraseña</string>
 </resources>

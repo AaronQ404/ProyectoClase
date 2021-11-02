@@ -1,58 +1,62 @@
 package com.aqa.proyectoclase.vista.fragments
 
 import android.os.Bundle
+import android.util.Patterns
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.aqa.proyectoclase.R
+import android.widget.Toast
+import com.aqa.proyectoclase.databinding.FragmentRegisterBinding
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.auth.ktx.userProfileChangeRequest
+import com.google.firebase.ktx.Firebase
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
+import java.util.regex.Pattern
 
-/**
- * A simple [Fragment] subclass.
- * Use the [RegisterFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
+
 class RegisterFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
+    val patronCorreo : Pattern = Patterns.EMAIL_ADDRESS
+    private lateinit var auth: FirebaseAuth
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_register, container, false)
-    }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment RegisterFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-                RegisterFragment().apply {
-                    arguments = Bundle().apply {
-                        putString(ARG_PARAM1, param1)
-                        putString(ARG_PARAM2, param2)
+        val binding: FragmentRegisterBinding = FragmentRegisterBinding.inflate(inflater,container,false)
+        binding.btnRegistrar.setOnClickListener {
+            auth= Firebase.auth
+            val correo = binding.txtCorreo.text.toString()
+            val userName = binding.txtUsername.text.toString()
+            val pass1 = binding.txtPass1.text.toString()
+            val pass2 = binding.txtPass2.text.toString()
+            val pass: String? = if(pass1.equals(pass2)) pass1 else null
+            if(correo.trim().equals("")){
+                Toast.makeText(this.context,"Debe de escribir un correo",Toast.LENGTH_SHORT).show()
+            }else if (!patronCorreo.matcher(correo).matches()){
+                Toast.makeText(this.context,"Debe introducir un correo valido",Toast.LENGTH_SHORT).show()
+            }else if(userName.trim().equals("")){
+                Toast.makeText(this.context,"Debe de introducir un nombre de usuario valido",Toast.LENGTH_SHORT).show()
+            }else if(pass?.trim().equals("")){
+                Toast.makeText(this.context,"Debe de introducir una contraseña",Toast.LENGTH_SHORT).show()
+            }else if(pass == null ) {
+                Toast.makeText(this.context,"Las contraseñas deben de coincidir",Toast.LENGTH_SHORT).show()
+            }else{
+                auth.createUserWithEmailAndPassword(correo,pass).addOnCompleteListener{
+                    val user = auth?.currentUser
+                    val profileCreateUp = userProfileChangeRequest {
+                        displayName = userName
+                    }
+                    user!!.updateProfile(profileCreateUp).addOnCompleteListener {
+                        Toast.makeText(this.context,"Usuario creado con exito",Toast.LENGTH_SHORT).show()
                     }
                 }
+            }
+        }
+        return binding.root
     }
+
+
+
 }

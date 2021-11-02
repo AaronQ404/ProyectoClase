@@ -1,58 +1,76 @@
 package com.aqa.proyectoclase.vista.fragments
 
 import android.os.Bundle
+import android.util.Patterns
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import com.aqa.proyectoclase.R
+import com.aqa.proyectoclase.databinding.FragmentLoginBinding
+import com.aqa.proyectoclase.modelo.User
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
+import java.util.regex.Pattern
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
 
-/**
- * A simple [Fragment] subclass.
- * Use the [LoginFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class LoginFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
-
+    private lateinit var database: DatabaseReference
+    lateinit var usuario: User
+    val patronCorreo: Pattern = Patterns.EMAIL_ADDRESS
+    val auth = Firebase.auth
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
+        database = Firebase.database.reference
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_login, container, false)
+//        if(auth.currentUser!=null){
+//            Firebase.auth.signOut()
+//        }
+
+        val binding: FragmentLoginBinding = FragmentLoginBinding.inflate(inflater,container,false)
+        binding.btnLogin.setOnClickListener {
+            lateinit var nick: String
+            val username = binding.txtUsuario.text.toString()
+            val pass = binding.pwdPass.text.toString()
+           if(username.trim().equals("")){ Toast.makeText(this.context,"Debe de introducir el correo",Toast.LENGTH_SHORT).show() }
+            else if(!patronCorreo.matcher(username.trim()).matches()){ Toast.makeText(this.context,"Correo erroneo",Toast.LENGTH_SHORT).show()}
+            else if(pass.trim().equals("")){Toast.makeText(this.context,"Debe de introducir la contraseña",Toast.LENGTH_SHORT).show()}
+            else if(pass.length < 8){Toast.makeText(this.context, "La contraseña debe de tener más de 8 caracteres.",Toast.LENGTH_SHORT).show()}
+            else{
+
+               auth.signInWithEmailAndPassword(username, pass)
+                       .addOnCompleteListener(OnCompleteListener  { task ->
+                           if (task.isSuccessful) {
+                               // Sign in success, update UI with the signed-in user's information
+                               val user: FirebaseUser? = auth.currentUser
+                                nick = user?.displayName.toString()
+                               Toast.makeText(this.context,"Logueado: ${nick}",Toast.LENGTH_SHORT).show()
+                               val bundle: Bundle = Bundle()
+                               bundle.putParcelable("user",user)
+                               val userFragment:ContactFragment = ContactFragment()
+                               activity?.supportFragmentManager?.beginTransaction()?.replace(R.id.frmLoginRegFrag,userFragment)
+                                   ?.addToBackStack(null)?.commit()
+                           }
+                           else {
+                               // If sign in fails, display a message to the user.
+                               Toast.makeText(this.context,"Este usuario no existe.",Toast.LENGTH_SHORT).show()
+                           }
+                       })
+            }
+        }
+
+        binding.btnRegister.setOnClickListener {
+            activity?.supportFragmentManager?.beginTransaction()?.replace(R.id.frmLoginRegFrag,RegisterFragment())
+                    ?.addToBackStack(null)?.commit()
+        }
+        return binding.root
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment LoginFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-                LoginFragment().apply {
-                    arguments = Bundle().apply {
-                        putString(ARG_PARAM1, param1)
-                        putString(ARG_PARAM2, param2)
-                    }
-                }
-    }
+
+
 }
