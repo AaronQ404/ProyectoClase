@@ -1,6 +1,5 @@
 package com.aqa.proyectoclase.modelo
 
-data class User (val uid: String, val username:String, val email:String, val profilePic:String) {
-
-
+data class User (var uid: String, var username:String, var email:String, var profilePic:String) {
+    constructor() : this("","","","")
 }

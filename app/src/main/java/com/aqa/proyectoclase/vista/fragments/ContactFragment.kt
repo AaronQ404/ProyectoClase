@@ -39,20 +39,20 @@ class ContactFragment : Fragment(), InterfazContactos {
         contexto = this.context!!
         users  = ArrayList<User>()
         val database = Firebase.database
-        val myRef = database.getReference("Contactos").child(auth.currentUser?.uid.toString())
-                .child("friends").orderByChild("username")
+        val myRef = database.getReference("Users").child(auth.currentUser?.uid.toString())
+                .child("friends")
         user = auth.currentUser!!
         val provId = user.providerData.toString()
         // Inflate the layout for this fragment
         val binding: FragmentContactBinding = FragmentContactBinding.inflate(inflater, container, false)
 
-        binding.txtUser.text = user?.displayName.toString()
 
         myRef.addValueEventListener(object: ValueEventListener {
 
             override fun onDataChange(snapshot: DataSnapshot) {
                 // This method is called once with the initial value and again
                 // whenever data at this location is updated.
+                val count : Long = snapshot.childrenCount
                 if(snapshot!=null){
                     for(u in snapshot.children){
                         val contacto = u.getValue<User>()
@@ -84,7 +84,6 @@ class ContactFragment : Fragment(), InterfazContactos {
         }else{
             userId="nada"
         }
-        binding.txtTest.text = userId
         return binding.root
     }
 
@@ -114,8 +113,6 @@ class ContactFragment : Fragment(), InterfazContactos {
         }catch(ex:Exception){
             Log.w(TAG, "loadPost:onCancelled\n ${ex.message}\n ${ex.stackTrace}", ex)
         }
-
-
     }
 
     override fun onClickContacto(u: User) {
