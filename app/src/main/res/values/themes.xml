@@ -15,4 +15,15 @@
 
 
     </style>
+    <style name="Theme.TestNavigationViewer.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="Theme.TestNavigationViewer.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+    <style name="Theme.ProyectoClase.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="Theme.ProyectoClase.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="Theme.ProyectoClase.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 </resources>

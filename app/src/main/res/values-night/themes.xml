@@ -13,6 +13,9 @@
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
         <item name="buttonStyle">@color/light_grey</item>
-        <item name="cardViewStyle">@color/grey</item>
+
     </style>
+    <style name="Theme.TestNavigationViewer.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="Theme.TestNavigationViewer.PopupOverlay" parent="ThemeOverlay.AppCompat.DayNight" />
 </resources>

@@ -8,10 +8,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.aqa.proyectoclase.R
 import com.aqa.proyectoclase.controlador.CardContactosAdapter
-import com.aqa.proyectoclase.controlador.InterfazContactos
 import com.aqa.proyectoclase.databinding.FragmentContactBinding
 import com.aqa.proyectoclase.modelo.User
 import com.google.firebase.auth.FirebaseAuth
@@ -23,7 +24,7 @@ import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
 
 
-class ContactFragment : Fragment(), InterfazContactos {
+class ContactFragment : Fragment(), CardContactosAdapter.OnClickContacto {
     private lateinit var auth:FirebaseAuth
     private lateinit var myRef:DatabaseReference
     private lateinit var contexto:Context
@@ -31,97 +32,82 @@ class ContactFragment : Fragment(), InterfazContactos {
     private lateinit var user :FirebaseUser
     private lateinit var users : ArrayList<User>
     private lateinit var contactosAdapter: CardContactosAdapter
-//    private lateinit var interfazContactos: InterfazContactos
+    val database = Firebase.database
+    private lateinit var binding: FragmentContactBinding
+
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         auth = Firebase.auth
-        contexto = this.context!!
+        contexto = this.requireContext()
         users  = ArrayList<User>()
-        val database = Firebase.database
-        val myRef = database.getReference("Users").child(auth.currentUser?.uid.toString())
-                .child("friends")
+        myRef = database.getReference("Friends").child(auth.currentUser?.uid.toString())
         user = auth.currentUser!!
         val provId = user.providerData.toString()
         // Inflate the layout for this fragment
-        val binding: FragmentContactBinding = FragmentContactBinding.inflate(inflater, container, false)
+        binding = FragmentContactBinding.inflate(inflater, container, false)
+        getFriends(myRef)
+        return binding.root
+    }
 
-
+    fun getFriends(myRef : DatabaseReference){
         myRef.addValueEventListener(object: ValueEventListener {
-
             override fun onDataChange(snapshot: DataSnapshot) {
                 // This method is called once with the initial value and again
                 // whenever data at this location is updated.
                 val count : Long = snapshot.childrenCount
-                if(snapshot!=null){
-                    for(u in snapshot.children){
-                        val contacto = u.getValue<User>()
-                        if (contacto != null) {
-                            users.add(contacto)
-                        }
-                    }
-                }else{
-                    userId="No tienes amigos"
+                for(u in snapshot.children){
+                    val userContact = database.getReference("Users").child(u.key.toString())
+                    getFriend(userContact)
                 }
-
-                contactosAdapter = CardContactosAdapter(users,contexto)
-                binding.rclContacts.adapter = contactosAdapter
-                binding.rclContacts.layoutManager = LinearLayoutManager(contexto, LinearLayoutManager.VERTICAL ,false)
-
             }
 
             override fun onCancelled(error: DatabaseError) {
                 Log.w(TAG, "Failed to read value.", error.toException())
             }
-
         })
-
-//        getData()
-        if(user.isAnonymous){
-            userId="anonimo"
-        }else if(user.isEmailVerified){
-            userId="email no verificado"
-        }else{
-            userId="nada"
-        }
-        return binding.root
     }
 
-    private fun getData(){
-        val misContactos:DatabaseReference = myRef.child("test")
-        try {
-            val userListener = object : ValueEventListener {
-                val algo = "asdf"
-
-                //TODO no se ejecuta este codigo
-                override fun onDataChange(dataSnapshot: DataSnapshot) {
-                    if (dataSnapshot.exists()) {
-                        userId=dataSnapshot.getValue().toString()
-                    }
-                }
-                override fun onCancelled(databaseError: DatabaseError) {
-                    // handle error
-
-
-                    Toast.makeText(context,"Error al consultar",Toast.LENGTH_SHORT).show()
-                    Log.w(TAG, "loadPost:onCancelled", databaseError.toException())
-                    userId="Error"
+    fun getFriend(myRef: DatabaseReference){
+        myRef.addValueEventListener(object : ValueEventListener{
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val contacto:User? = snapshot.getValue<User>() // com.google.firebase.database.DatabaseException: Expected a List while deserializing, but got a class java.util.HashMap
+                if (contacto != null) {
+                    users.add(contacto)
+                    loadRecycler()
                 }
             }
-            misContactos.addValueEventListener(userListener)
+            override fun onCancelled(error: DatabaseError) {
+                Log.w(TAG, "Failed to read value.", error.toException())
+            }
+        })
+    }
 
-        }catch(ex:Exception){
-            Log.w(TAG, "loadPost:onCancelled\n ${ex.message}\n ${ex.stackTrace}", ex)
+    override fun onItemClick(pos: Int) {
+        val chatFra: ChatFragment = ChatFragment()
+        val bundle:Bundle = Bundle()
+        val friend = users.get(pos)
+        chatFra.arguments = bundle
+        bundle.putString("uidF",friend.uid)
+        Toast.makeText(context, friend.username, Toast.LENGTH_LONG).show()
+
+        activity?.supportFragmentManager?.beginTransaction()?.replace(
+                R.id.frmMainFrame,
+                ChatFragment()
+        )
+                ?.addToBackStack(null)?.commit()
+    }
+
+    fun loadRecycler(){
+        if(users.size >0){
+            contactosAdapter = CardContactosAdapter(users,contexto,this)
+            binding.rclContacts.adapter = contactosAdapter
+            binding.rclContacts.layoutManager = LinearLayoutManager(contexto, LinearLayoutManager.VERTICAL ,false)
+        }else{
+            userId="No tienes amigos"
         }
+
     }
 
-    override fun onClickContacto(u: User) {
-        Toast.makeText(context,u.username.toString(),Toast.LENGTH_SHORT).show()
-    }
 
 }
-
-
-
-
-
