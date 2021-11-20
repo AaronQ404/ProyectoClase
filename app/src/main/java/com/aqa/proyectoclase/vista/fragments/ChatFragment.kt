@@ -43,7 +43,11 @@ class ChatFragment : Fragment() {
         binding = FragmentChatBinding.inflate(inflater, container, false)
         fbtnEnviar = binding.fbtnEnviar
         txtMensaje = binding.etxtMensaje
-        fbtnEnviar.setOnClickListener(View.OnClickListener { enviarMensaje() })
+        fbtnEnviar.setOnClickListener(View.OnClickListener {
+            enviarMensaje()
+            txtMensaje.text.clear()
+            binding.rclChat.scrollToPosition(mensajes.size - 1)
+        })
         myRef = Firebase.database.getReference("Members")
         myRef.equalTo(user.uid).addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
@@ -70,23 +74,8 @@ class ChatFragment : Fragment() {
     }
 
     fun cargarMensajes(myRef: String?) {
-        val ref = Firebase.database.getReference("Messages").child(myRef.toString())
-//        ref.addValueEventListener(object : ValueEventListener {
-//            override fun onDataChange(snapshot: DataSnapshot) {
-//                for (m in snapshot.children) {
-//                    val mensaje: Message? = m.getValue<Message>()
-//                    if (mensaje != null) {
-//                        mensajes.add(mensaje)
-//                        loadRecycer()
-//                    }
-//
-//                }
-//            }
-//
-//            override fun onCancelled(error: DatabaseError) {
-//                TODO("Not yet implemented")
-//            }
-//        })
+        val ref = Firebase.database.getReference("Messages").child(myRef.toString()).orderByChild("timestamp")
+
 
         ref.addChildEventListener(object : ChildEventListener {
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {

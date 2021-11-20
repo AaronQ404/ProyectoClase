@@ -47,7 +47,7 @@ class ChatAddapter(val messages: ArrayList<Message>, val uid: String): RecyclerV
         var asdf = 1+1
         fun bind(message: Message){//aqui
             val formatDate: DateFormat = SimpleDateFormat("dd/MM/yyyy")
-            val formatTime: DateFormat = SimpleDateFormat("hh:mm")
+            val formatTime: DateFormat = SimpleDateFormat("HH:mm")
             var time: Date = Date()
             var timeNow: Date = Date()
 

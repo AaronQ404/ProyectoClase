@@ -12,8 +12,11 @@
         <activity
             android:name=".vista.MainActivity"
             android:label="@string/title_activity_main"
-            android:theme="@style/Theme.ProyectoClase.NoActionBar"></activity>
-        <activity android:name=".vista.LoginRegActivity">
+            android:theme="@style/Theme.ProyectoClase.NoActionBar"
+            android:windowSoftInputMode="adjustPan"/>
+        <activity android:name=".vista.LoginRegActivity"
+            android:windowSoftInputMode="adjustPan"
+            >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
