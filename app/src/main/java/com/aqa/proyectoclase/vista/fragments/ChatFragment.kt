@@ -70,7 +70,7 @@ class ChatFragment : Fragment() {
                 TODO("Not yet implemented")
             }
         })
-        return binding.root//aqui?
+        return binding.root
     }
 
     fun cargarMensajes(myRef: String?) {

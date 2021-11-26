@@ -1,6 +1,7 @@
 package com.aqa.proyectoclase.controlador
 
 import android.content.Context
+import android.util.Base64
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -29,7 +30,7 @@ class CardContactosAdapter(
     inner class ViewHolder(view: View, itemClickListener: OnClickContacto): RecyclerView.ViewHolder(view)  {
 
         val txtUsename : TextView
-        val imgPicContact : ImageView
+        val imgPicContact : CircleImageView
         val crdContacto : ConstraintLayout
             init{
                 txtUsename = view.findViewById(R.id.txtUsernameContact)
@@ -50,7 +51,7 @@ class CardContactosAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val user = contactos[position]
         holder.txtUsename.text = user.username
-        Glide.with(contexto).load(contactos[position]).placeholder(R.drawable.profile).into(holder.imgPicContact)
+        Glide.with(contexto).load(Base64.decode(contactos[position].profilePic,Base64.DEFAULT)).placeholder(R.drawable.profile).into(holder.imgPicContact)
     }
 
     override fun getItemCount(): Int {

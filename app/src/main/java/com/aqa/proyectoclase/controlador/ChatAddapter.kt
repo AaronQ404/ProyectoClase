@@ -4,12 +4,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.aqa.proyectoclase.R
 import com.aqa.proyectoclase.modelo.Message
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.concurrent.TimeUnit
 import kotlin.collections.ArrayList
 
 class ChatAddapter(val messages: ArrayList<Message>, val uid: String): RecyclerView.Adapter<ChatAddapter.ViewHolder>() {
@@ -44,9 +46,8 @@ class ChatAddapter(val messages: ArrayList<Message>, val uid: String): RecyclerV
         val txtContent: TextView = itemView.findViewById(R.id.txtContent)
         val txtTime: TextView = itemView.findViewById(R.id.txtTime)
         val txtDate: TextView = itemView.findViewById(R.id.txtDate)
-        var asdf = 1+1
         fun bind(message: Message){//aqui
-            val formatDate: DateFormat = SimpleDateFormat("dd/MM/yyyy")
+            val formatDate: DateFormat = SimpleDateFormat("dd MMMM yyyy")
             val formatTime: DateFormat = SimpleDateFormat("HH:mm")
             var time: Date = Date()
             var timeNow: Date = Date()
@@ -58,12 +59,8 @@ class ChatAddapter(val messages: ArrayList<Message>, val uid: String): RecyclerV
             timeNow.time = System.currentTimeMillis()
             if(formatDate.format(time).equals(formatDate.format(timeNow))){
                 txtDate.text = "Hoy"
-            }else if(formatDate.format(time).split("/")[1].
-                    equals(formatDate.format(timeNow).split("/")[1]) &&
-                    formatDate.format(time).split("/")[0] <
-                    formatDate.format(timeNow).split("/")[0]){
+            }else if(TimeUnit.DAYS.convert(timeNow.time - time.time,TimeUnit.MILLISECONDS) == 1L ){
                 txtDate.text = "Ayer"
-
             }else{
                 txtDate.text = formatDate.format(time)
             }
