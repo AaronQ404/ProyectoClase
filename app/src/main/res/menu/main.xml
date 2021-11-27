@@ -2,13 +2,16 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/iLogoff"
-        android:title="@string/log_off"
-        app:showAsAction="ifRoom"
-        android:icon="@drawable/ic_baseline_logoff"/>
-    <item
-        android:id="@+id/action_settings"
-        android:orderInCategory="100"
+        android:id="@+id/iSettings"
+        android:icon="@drawable/ic_baseline_settings_24"
+        android:orderInCategory="00"
         android:title="@string/action_settings"
-        app:showAsAction="never" />
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/iLogoff"
+        android:icon="@drawable/ic_baseline_logoff"
+        android:title="@string/log_off"
+        app:showAsAction="ifRoom" />
+
+
 </menu>

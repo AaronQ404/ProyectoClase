@@ -35,6 +35,7 @@ class ChatFragment : Fragment() {
     private lateinit var fbtnEnviar: FloatingActionButton
     private lateinit var idChat:String
     private lateinit var txtMensaje: EditText
+    private val database:FirebaseDatabase = Firebase.database
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View {
@@ -48,7 +49,7 @@ class ChatFragment : Fragment() {
             txtMensaje.text.clear()
             binding.rclChat.scrollToPosition(mensajes.size - 1)
         })
-        myRef = Firebase.database.getReference("Members")
+        myRef = database.getReference("Members")
         myRef.equalTo(user.uid).addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 myRef.equalTo(uidF).addValueEventListener(object : ValueEventListener {
@@ -74,7 +75,7 @@ class ChatFragment : Fragment() {
     }
 
     fun cargarMensajes(myRef: String?) {
-        val ref = Firebase.database.getReference("Messages").child(myRef.toString()).orderByChild("timestamp")
+        val ref = database.getReference("Messages").child(myRef.toString()).orderByChild("timestamp")
 
 
         ref.addChildEventListener(object : ChildEventListener {
@@ -105,12 +106,15 @@ class ChatFragment : Fragment() {
         chatAdapter = ChatAddapter(mensajes, user.uid)
         binding.rclChat.adapter = chatAdapter
         binding.rclChat.layoutManager = LinearLayoutManager(this.context, LinearLayoutManager.VERTICAL, false)
-
     }
 
     fun enviarMensaje(){
         val nMensaje = "m"+(mensajes.size+1)
-        Firebase.database.getReference("Messages").child(idChat).
+        database.getReference("Messages").child(idChat).
         child(nMensaje).setValue(Message(user.uid,txtMensaje.text.toString(), System.currentTimeMillis()))
+        val refChat :DatabaseReference = database.getReference("Chats").child(idChat)
+        refChat.child("lastMessage").setValue(txtMensaje.text.toString())
+        refChat.child("timestamp").setValue(System.currentTimeMillis())
+        refChat.child("lastSender").setValue(user.uid)
     }
 }
