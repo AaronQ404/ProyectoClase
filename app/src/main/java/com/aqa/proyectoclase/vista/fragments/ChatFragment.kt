@@ -10,9 +10,12 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.aqa.proyectoclase.R
 import com.aqa.proyectoclase.controlador.ChatAddapter
+import com.aqa.proyectoclase.controlador.MainController
 import com.aqa.proyectoclase.databinding.FragmentChatBinding
 import com.aqa.proyectoclase.modelo.Message
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
@@ -40,6 +43,8 @@ class ChatFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View {
         // Inflate the layout for this fragment
+        MainController.Instance.changeBMenuVisibility(activity,false)
+
         contexto = this.requireContext()
         binding = FragmentChatBinding.inflate(inflater, container, false)
         fbtnEnviar = binding.fbtnEnviar

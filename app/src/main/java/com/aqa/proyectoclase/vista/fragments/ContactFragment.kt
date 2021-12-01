@@ -7,14 +7,18 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.aqa.proyectoclase.R
 import com.aqa.proyectoclase.controlador.CardContactosAdapter
+import com.aqa.proyectoclase.controlador.MainController
 import com.aqa.proyectoclase.databinding.FragmentContactBinding
 import com.aqa.proyectoclase.modelo.User
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
@@ -36,8 +40,12 @@ class ContactFragment : Fragment(), CardContactosAdapter.OnClickContacto {
     private lateinit var binding: FragmentContactBinding
 
 
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
+        MainController.Instance.changeBMenuVisibility(activity,true)
+        var btvNavigationView : BottomNavigationView = requireActivity().findViewById(R.id.bnvMenu)
+//        btvNavigationView.selectedItemId =R.id.itmChats
         auth = Firebase.auth
         contexto = this.requireContext()
         users  = ArrayList<User>()
@@ -47,6 +55,12 @@ class ContactFragment : Fragment(), CardContactosAdapter.OnClickContacto {
         // Inflate the layout for this fragment
         binding = FragmentContactBinding.inflate(inflater, container, false)
         getFriends(myRef)
+        var fbtnAddContact =  binding.fbtnAddContact
+        fbtnAddContact.setOnClickListener { view ->
+            MainController.Instance.changeFragent(activity,R.id.frmMainFrame,SearchContactFragment(),null)
+            Toast.makeText(context,"Test",Toast.LENGTH_SHORT).show()
+        }
+
         return binding.root
     }
 
@@ -90,12 +104,7 @@ class ContactFragment : Fragment(), CardContactosAdapter.OnClickContacto {
         chatFra.arguments = bundle
         bundle.putString("uidF",friend.uid)
         Toast.makeText(context, friend.username, Toast.LENGTH_LONG).show()
-
-        activity?.supportFragmentManager?.beginTransaction()?.replace(
-                R.id.frmMainFrame,
-                ChatFragment()
-        )
-                ?.addToBackStack(null)?.commit()
+            MainController.Instance.changeFragent(activity,R.id.frmMainFrame,ChatFragment())
     }
 
     fun loadRecycler(){
@@ -106,8 +115,5 @@ class ContactFragment : Fragment(), CardContactosAdapter.OnClickContacto {
         }else{
             userId="No tienes amigos"
         }
-
     }
-
-
 }

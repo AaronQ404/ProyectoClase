@@ -19,7 +19,7 @@ import de.hdodenhof.circleimageview.CircleImageView
 class CardContactosAdapter(
         var contactos: ArrayList<User>,
         val contexto: Context,
-        val itemClickListener: OnClickContacto)
+        val itemClickListener: OnClickContacto? = null)
     : RecyclerView.Adapter<CardContactosAdapter.ViewHolder>() {
 
 
@@ -43,7 +43,7 @@ class CardContactosAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val v : View = LayoutInflater.from(parent.context)
                 .inflate(R.layout.card_contacto, parent, false)
-        return ViewHolder(v,itemClickListener).listen{ pos: Int, type: Int ->}
+        return ViewHolder(v, itemClickListener!!).listen{ pos: Int, type: Int ->}
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {

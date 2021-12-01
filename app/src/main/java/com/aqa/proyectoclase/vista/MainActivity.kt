@@ -2,12 +2,15 @@ package com.aqa.proyectoclase.vista
 
 import android.os.Bundle
 import android.view.Menu
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
 import com.aqa.proyectoclase.R
+import com.aqa.proyectoclase.controlador.MainController
 import com.aqa.proyectoclase.databinding.ActivityMainBinding
+import com.aqa.proyectoclase.vista.fragments.ChatFragment
 import com.aqa.proyectoclase.vista.fragments.ContactFragment
 import com.aqa.proyectoclase.vista.fragments.PostFragment
 import com.google.android.material.bottomnavigation.BottomNavigationMenu
@@ -22,19 +25,20 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
-        btvMenu = binding.bnvMenu
         setContentView(binding.root)
-        openFragment(PostFragment())
-
+        btvMenu = binding.bnvMenu
+        supportFragmentManager
+        MainController.Instance.changeFragent(this,binding.frmMainFrame.id,PostFragment())
+        btvMenu.selectedItemId = R.id.itmChats
         btvMenu.setOnNavigationItemSelectedListener{
             menuItem ->
             when(menuItem.itemId) {
                 R.id.itmPosts -> {
-                    openFragment(PostFragment())
+                    MainController.Instance.changeFragent(this,binding.frmMainFrame.id,PostFragment())
                     true
                 }
                 R.id.itmChats -> {
-                    openFragment(ContactFragment())
+                    MainController.Instance.changeFragent(this,binding.frmMainFrame.id,ContactFragment())
                     true
                 }
                 else -> false
@@ -46,15 +50,6 @@ class MainActivity : AppCompatActivity() {
         val inflater = menuInflater
         inflater.inflate(R.menu.main, menu)
         return true
-    }
-    /**
-     * Método encargado de gestionar los diferentes fragmentos de la aplicacion
-     * */
-    fun openFragment(fragment : Fragment){
-        val fragTransiction: FragmentTransaction = supportFragmentManager.beginTransaction()
-        fragTransiction.replace(binding.frmMainFrame.id,fragment)
-            .commit()
-
     }
 
 }
