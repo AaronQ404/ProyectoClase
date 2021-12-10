@@ -5,6 +5,7 @@ import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
@@ -42,13 +43,11 @@ class ContactFragment : Fragment(), CardContactosAdapter.OnClickContacto {
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+                              savedInstanceState: Bundle?): View {
         MainController.Instance.changeBMenuVisibility(activity,true)
-        var btvNavigationView : BottomNavigationView = requireActivity().findViewById(R.id.bnvMenu)
-//        btvNavigationView.selectedItemId =R.id.itmChats
         auth = Firebase.auth
         contexto = this.requireContext()
-        users  = ArrayList<User>()
+        users  = ArrayList()
         myRef = database.getReference("Friends").child(auth.currentUser?.uid.toString())
         user = auth.currentUser!!
         val provId = user.providerData.toString()
@@ -69,7 +68,7 @@ class ContactFragment : Fragment(), CardContactosAdapter.OnClickContacto {
             override fun onDataChange(snapshot: DataSnapshot) {
                 // This method is called once with the initial value and again
                 // whenever data at this location is updated.
-                val count : Long = snapshot.childrenCount
+
                 for(u in snapshot.children){
                     val userContact = database.getReference("Users").child(u.key.toString())
                     getFriend(userContact)

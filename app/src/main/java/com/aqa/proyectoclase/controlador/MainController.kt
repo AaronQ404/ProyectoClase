@@ -11,9 +11,6 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 class MainController {
     object Instance{
 
-        init {
-
-            }
         fun changeFragent(activity : FragmentActivity?,idFrameLayout : Int, fragment : Fragment, addTBStack : String? = null, hideBMenu: Boolean = false) {
 
             if (activity != null) {
@@ -22,7 +19,7 @@ class MainController {
                         idFrameLayout,
                         fragment).addToBackStack(addTBStack).commit()
                 if(hideBMenu){
-                    btvNavigationView.visibility = View.INVISIBLE
+                    btvNavigationView.visibility = View.GONE
                 }else{
                     btvNavigationView.visibility = View.VISIBLE
                 }
@@ -35,12 +32,9 @@ class MainController {
                 if(setVisible){
                     btvNavigationView.visibility = View.VISIBLE
                 }else{
-                    btvNavigationView.visibility = View.INVISIBLE
+                    btvNavigationView.visibility = View.GONE
                 }
             }
         }
     }
-
-
-
 }

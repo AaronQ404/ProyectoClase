@@ -21,4 +21,6 @@
     <string name="title_activity_primera">PrimeraActivity</string>
     <string name="profile">Perfil</string>
     <string name="search">Buscar</string>
+    <string name="registrate">Registrate</string>
+    <string name="password_forgotten">¿Has olvidado la contraseña?</string>
 </resources>

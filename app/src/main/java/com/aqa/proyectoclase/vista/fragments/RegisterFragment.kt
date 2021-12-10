@@ -46,11 +46,10 @@ class RegisterFragment : Fragment() {
                 Toast.makeText(this.context,"Las contraseñas deben de coincidir",Toast.LENGTH_SHORT).show()
             }else{
                 auth.createUserWithEmailAndPassword(correo,pass).addOnCompleteListener{
-                    val user = auth?.currentUser
+                    val user = auth.currentUser
                     val profileCreateUp = userProfileChangeRequest {
                         displayName = userName
                     }
-                    //TODO al crear usuario guardarlo en realtime database
                     user!!.updateProfile(profileCreateUp).addOnCompleteListener {
                         val userLocal: User = User(user.uid.toString(),user.displayName.toString(),user.email.toString()," ")
                         Firebase.database.getReference("Users").child(auth.currentUser?.uid.toString()).setValue(userLocal)

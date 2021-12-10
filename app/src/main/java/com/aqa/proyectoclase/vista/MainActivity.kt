@@ -27,9 +27,9 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         btvMenu = binding.bnvMenu
-        supportFragmentManager
         MainController.Instance.changeFragent(this,binding.frmMainFrame.id,PostFragment())
-        btvMenu.selectedItemId = R.id.itmChats
+        supportFragmentManager
+        btvMenu.selectedItemId = R.id.itmPosts
         btvMenu.setOnNavigationItemSelectedListener{
             menuItem ->
             when(menuItem.itemId) {

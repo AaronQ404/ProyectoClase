@@ -7,15 +7,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
-import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.aqa.proyectoclase.R
 import com.aqa.proyectoclase.controlador.ChatAddapter
 import com.aqa.proyectoclase.controlador.MainController
 import com.aqa.proyectoclase.databinding.FragmentChatBinding
 import com.aqa.proyectoclase.modelo.Message
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
@@ -23,7 +20,6 @@ import com.google.firebase.database.*
 import com.google.firebase.database.ktx.database
 import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
-import java.security.Timestamp
 
 
 class ChatFragment : Fragment() {
@@ -60,7 +56,6 @@ class ChatFragment : Fragment() {
                 myRef.equalTo(uidF).addValueEventListener(object : ValueEventListener {
                     override fun onDataChange(snapshot: DataSnapshot) {
                         for (a in snapshot.children) {
-                            Toast.makeText(contexto, a.key, Toast.LENGTH_SHORT).show()
                             idChat = a.key.toString()
                             cargarMensajes(a.key)
                         }
@@ -123,3 +118,5 @@ class ChatFragment : Fragment() {
         refChat.child("lastSender").setValue(user.uid)
     }
 }
+
+

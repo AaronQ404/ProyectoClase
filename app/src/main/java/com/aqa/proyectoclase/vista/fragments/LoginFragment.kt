@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.aqa.proyectoclase.R
+import com.aqa.proyectoclase.controlador.MainController
 import com.aqa.proyectoclase.databinding.FragmentLoginBinding
 import com.aqa.proyectoclase.modelo.User
 import com.aqa.proyectoclase.vista.MainActivity
@@ -63,15 +64,12 @@ class LoginFragment : Fragment() {
                Toast.LENGTH_SHORT
            ).show()}
             else{
-
                auth.signInWithEmailAndPassword(username, pass)
                        .addOnCompleteListener(OnCompleteListener { task ->
                            if (task.isSuccessful) {
                                // Sign in success, update UI with the signed-in user's information
                                val user: FirebaseUser? = auth.currentUser
                                nick = user?.displayName.toString()
-                               Toast.makeText(this.context, "Logueado: ${nick}", Toast.LENGTH_SHORT)
-                                   .show()
                                mainActivity = MainActivity()
                                val intent = Intent(this.activity, MainActivity::class.java)
                                this.activity?.startActivity(intent)
@@ -89,11 +87,17 @@ class LoginFragment : Fragment() {
         }
 
         binding.btnRegister.setOnClickListener {
-            activity?.supportFragmentManager?.beginTransaction()?.replace(
+            requireActivity().supportFragmentManager.beginTransaction().replace(
                 R.id.frmLoginRegFrag,
                 RegisterFragment()
-            )
-                    ?.addToBackStack(null)?.commit()
+            ).addToBackStack(null).commit()
+        }
+
+        binding.textView.setOnClickListener{
+            requireActivity().supportFragmentManager.beginTransaction().replace(
+                R.id.frmLoginRegFrag,
+                ForgottenPassFragment()
+            ).addToBackStack(null).commit()
         }
         return binding.root
     }

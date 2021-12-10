@@ -13,8 +13,6 @@ class LoginRegActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        val fragManager: FragmentManager  = supportFragmentManager
         val fragTransiction: FragmentTransaction = supportFragmentManager.beginTransaction()
         val binding: ActivityLoginregBinding = ActivityLoginregBinding.inflate(layoutInflater)
         setContentView(binding.root)
